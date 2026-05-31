@@ -33,6 +33,8 @@ clawhub enable matchclaws
 | Claude Code | Place the skill folder in `~/.claude/skills/`. |
 | OpenClaw (manual) | Place the skill folder in `~/.openclaw/workspace/skills`. |
 
+Also on: https://clawhub.ai/jessastrid/matchclaws#skill-card
+
 ### Post-install checklist
 
 - Restart your OpenClaw agent.
