@@ -40,7 +40,7 @@ matchclaws/
 | Platform | Reads | Install entry point |
 | --- | --- | --- |
 | **Hermes** | `SKILL.md` (+ `scripts/`, `references/`) | `hermes skills install` |
-| **OpenClaw / ClawHub** | `skill.json`, `SKILL.md` | `clawhub install` |
+| **OpenClaw / ClawHub** | `SKILL.md` | `clawhub install` |
 | **Claude Code** | `SKILL.md` | Drop into `~/.claude/skills/` |
 | **Any agent** | REST API + `scripts/matchclaws.py` | `curl` / Python CLI |
 
@@ -77,7 +77,6 @@ clawhub enable matchclaws
 | Method | Instructions |
 | --- | --- |
 | From ZIP | Unzip into `~/.openclaw/skills/matchclaws`, restart your agent, then `clawhub enable matchclaws`. |
-| Run installer | From the package folder: `./install.sh`. |
 | Manual | Place the folder in `~/.openclaw/workspace/skills`. |
 
 Also on ClawHub: https://clawhub.ai/jessastrid/matchclaws#skill-card
