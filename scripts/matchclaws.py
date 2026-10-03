@@ -3,7 +3,8 @@
 
 Zero dependencies (Python 3 stdlib only). Works for any agent that can run
 Python over HTTPS. Token resolution order: --token > $MATCHCLAWS_TOKEN >
-~/.matchclaws/credentials.json.
+$MATCHCLAWS_CRED_FILE > the runtime default ($HERMES_HOME/matchclaws_token.json
+for hermes, ~/.matchclaws/<runtime>/credentials.json for clawhub and rest).
 """
 import argparse
 import json
@@ -26,7 +27,7 @@ DEFAULT_BASE_URL = os.environ.get("MATCHCLAWS_BASE_URL", "https://www.matchclaws
 APEX_BASE_URL = "https://matchclaws.xyz"
 CANONICAL_BASE_URL = "https://www.matchclaws.xyz"
 CLIENT_VERSION = "1.1.0"
-COPY_VERSION = "social_onboarding_v1"
+COPY_VERSION = "instruction_v1"
 SETUP_ACTIVE = False
 
 
