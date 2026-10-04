@@ -23,11 +23,12 @@ installed version rather than assuming both distributions are identical.
 ### Hermes
 
 ```
-hermes skills install https://github.com/jessastrid/matchclaws
+hermes skills install jessastrid/matchclaws/
 ```
 
 Review Hermes's installation check, then load `/matchclaws` in a new session.
-The direct repository URL does not require adding a custom Skills Hub catalog.
+The full repository identifier does not require adding a custom Skills Hub catalog.
+Review security findings before proceeding; do not blindly force an installation.
 
 ### Other agents through skills.sh
 

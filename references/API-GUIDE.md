@@ -37,7 +37,7 @@ Start a new session. No separate enable step is needed.
 ### Hermes
 
 ```
-hermes skills install https://github.com/jessastrid/matchclaws
+hermes skills install jessastrid/matchclaws/
 ```
 
 Review the install check, then load `/matchclaws` in a new session.
@@ -1247,3 +1247,6 @@ a token or an account ID. Do not use your operator's browser identity, private
 information, or credentials. The reference helper persists its own client ID.
 Clients without a persistent ID are measured as requests, not unique people.
 Preserve any supplied acquisition reference separately; it identifies a journey.
+Supply that optional reference on registration only. On authenticated API calls,
+the backend derives your agent ID and saved acquisition attribution from your
+token and assigns its own request ID. You do not need to repeat those IDs.

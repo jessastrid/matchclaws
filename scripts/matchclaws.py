@@ -12,6 +12,7 @@ import os
 import random
 import secrets
 import contextlib
+from contextvars import ContextVar
 import http.client
 import hashlib
 import pathlib
@@ -29,6 +30,8 @@ CANONICAL_BASE_URL = "https://www.matchclaws.xyz"
 CLIENT_VERSION = "1.1.0"
 COPY_VERSION = "instruction_v1"
 SETUP_ACTIVE = False
+CLI_RUNTIME = ContextVar("matchclaws_cli_runtime", default=None)
+CLI_SETUP_ORIGIN = ContextVar("matchclaws_cli_setup_origin", default=None)
 
 
 class SetupError(Exception):
@@ -39,7 +42,7 @@ class SetupError(Exception):
 
 
 def runtime_name():
-    runtime = os.environ.get("MATCHCLAWS_RUNTIME", "hermes")
+    runtime = CLI_RUNTIME.get() or os.environ.get("MATCHCLAWS_RUNTIME", "hermes")
     if runtime not in ("clawhub", "hermes", "rest"):
         raise SetupError("invalid_runtime", "Choose clawhub, hermes, or rest.")
     return runtime
@@ -51,7 +54,7 @@ def hermes_home():
 
 def cred_path():
     """Token file location. Defaults to ~/.hermes/matchclaws_token.json so Hermes
-    can mount it into remote sandboxes via `required_credential_files`. Override
+    can optionally mount it via private `terminal.credential_files`. Override
     with $MATCHCLAWS_CRED_FILE."""
     override = os.environ.get("MATCHCLAWS_CRED_FILE")
     if override:
@@ -287,7 +290,7 @@ def report_setup_failure(code):
     try:
         acquisition_id = acquisition_id or load_credentials().get("acquisition_id", "")
         uuid.UUID(acquisition_id)
-        origin = os.environ.get("MATCHCLAWS_SETUP_ORIGIN")
+        origin = CLI_SETUP_ORIGIN.get()
         if not origin:
             return
         req = urllib.request.Request(origin + "/api/acquisition/session", method="PATCH",
@@ -813,12 +816,13 @@ def build_parser():
 def main(argv=None):
     global SETUP_ACTIVE
     args = build_parser().parse_args(argv)
+    previous_setup = SETUP_ACTIVE
     SETUP_ACTIVE = args.command in ("setup", "register", "install-skill")
-    if args.runtime:
-        os.environ["MATCHCLAWS_RUNTIME"] = args.runtime
+    runtime_context = CLI_RUNTIME.set(args.runtime)
+    origin_context = CLI_SETUP_ORIGIN.set(None)
     try:
         if SETUP_ACTIVE:
-            os.environ["MATCHCLAWS_SETUP_ORIGIN"] = base_url(args)
+            CLI_SETUP_ORIGIN.set(base_url(args))
         if args.command in ("setup", "register"):
             with setup_lock():
                 return args.func(args)
@@ -830,6 +834,10 @@ def main(argv=None):
         _out({"status": "error", "error_code": "credential_write_failed",
               "recovery": "Repair access to the credential file, then repeat the same command. Keep any pending registration key; credentials are never printed."})
         return 1
+    finally:
+        CLI_SETUP_ORIGIN.reset(origin_context)
+        CLI_RUNTIME.reset(runtime_context)
+        SETUP_ACTIVE = previous_setup
 
 
 if __name__ == "__main__":
